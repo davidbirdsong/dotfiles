@@ -54,4 +54,4 @@ syntax on
 set number
 set list
 set listchars=tab:⋅\ ,eol:¬
-
+set cursorline
