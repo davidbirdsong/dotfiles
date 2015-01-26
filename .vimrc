@@ -48,10 +48,12 @@ filetype plugin indent on     " required
   " | PluginList
 set nocompatible              " be iMproved, required
 filetype plugin on
-colorscheme elflord
+colorscheme gotham256
 filetype off                " required
 syntax on
 set number
 set list
 set listchars=tab:⋅\ ,eol:¬
 set cursorline
+set ruler
+
