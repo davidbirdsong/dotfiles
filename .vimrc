@@ -1,54 +1,38 @@
-" set rtp+=$GOPATH/src/github.com/glang/lint/misc/vim
+call plug#begin('~/.vim/plugged')
 
-
-" set the runtime path to include Vundle and initialize
-set rtp+=~/.vim/bundle/vundle/
-call vundle#rc()
-" alternatively, pass a path where Vundle should install bundles
-"let path = '~/some/path/here'
-"call vundle#rc(path)
-
-" let Vundle manage Vundle, required
-Plugin 'gmarik/vundle'
-
-" The following are examples of different formats supported.
-" Keep bundle commands between here and filetype plugin indent on.
-" scripts on GitHub repos
-Plugin 'tpope/vim-fugitive'
-Plugin 'Lokaltog/vim-easymotion'
-Plugin 'tpope/vim-rails.git'
-" The sparkup vim script is in a subdirectory of this repo called vim.
-" Pass the path to set the runtimepath properly.
-Plugin 'rstacruz/sparkup', {'rtp': 'vim/'}
-" scripts from http://vim-scripts.org/vim/scripts.html
-Plugin 'L9'
-Plugin 'FuzzyFinder'
-" scripts not on GitHub
-Plugin 'git://git.wincent.com/command-t.git'
-" git repos on your local machine (i.e. when working on your own plugin)
+" Make sure you use single quotes
+Plug 'junegunn/seoul256.vim'
+Plug 'junegunn/vim-easy-align'
 "
-Plugin 'fatih/vim-go'
-Plugin 'git@github.com:Valloric/YouCompleteMe.git'
-Plugin 'https://github.com/SirVer/ultisnips'
+Plug 'tpope/vim-fugitive'
+Plug 'Lokaltog/vim-easymotion'
+Plug 'rstacruz/sparkup', {'rtp': 'vim/'}
+Plug 'fatih/vim-go'
+Plug 'L9'
+Plug 'FuzzyFinder'
+Plug 'whatyouhide/vim-gotham'
+Plug 'Valloric/YouCompleteMe', { 'do': './install.sh' }
+Plug 'bling/vim-airline'
+Plug 'SirVer/ultisnips'
+Plug 'stephpy/vim-yaml'
 let g:UltiSnipsJumpForwardTrigger="<c-b>"
 let g:UltiSnipsJumpBackwardTrigger="<c-z>"
 let g:UltiSnipsEditSplit="vertical"
 
+Plug 'majutsushi/tagbar'
+let g:tagbar_type_go = {
+    \ 'ctagstype': 'go',
+    \ 'kinds' : [
+        \'p:package',
+        \'f:function',
+        \'v:variables',
+        \'t:type',
+        \'c:const'
+    \]
+    \}
 
-filetype plugin indent on     " required
-" To ignore plugin indent changes, instead use:
-"filetype plugin on
-"
-" Brief help
-"Plugin
-  " | PluginInstall(!), VundleInstall(!)
-  " | PluginUpdate, VundleUpdate
-  " | PluginSearch(!), VundleSearch(!)
-  " | PluginClean(!), VundleClean(!)
-  " | PluginList
 set nocompatible              " be iMproved, required
 filetype plugin on
-colorscheme gotham256
 filetype off                " required
 syntax on
 set number
@@ -57,3 +41,4 @@ set listchars=tab:⋅\ ,eol:¬
 set cursorline
 set ruler
 
+call plug#end()
