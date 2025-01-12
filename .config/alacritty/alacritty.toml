@@ -1,0 +1,9 @@
+[terminal.shell]
+	program = "/opt/homebrew/bin/bash"
+
+[font]
+	size = 16
+	normal =  {family = "Inconsolata Nerd Font Propo" , style = "Regular" }
+
+# normal =  {family = "Tinos Nerd Font Propo", style = "Regular" }
+# normal =  {family = "Inconsolata Nerd Font Propo" , style = "Regular" }
