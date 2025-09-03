@@ -7,6 +7,7 @@ return {
         opts.filesystem.filtered_items = vim.tbl_deep_extend("force", opts.filesystem.filtered_items or {}, {
             visible = true,
             never_show = { ".git" },
+            never_show_by_pattern = { "*.o", "*.swp" },
             --hide_dotfiles = false,
             -- hide_gitignored = false,
             --
