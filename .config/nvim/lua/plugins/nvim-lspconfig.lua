@@ -1,8 +1,8 @@
 return {
     "neovim/nvim-lspconfig",
     dependencies = {
-        "williamboman/mason.nvim",
-        "williamboman/mason-lspconfig.nvim",
+        "mason-org/mason.nvim",
+        "mason-org/mason-lspconfig.nvim",
         "WhoIsSethDaniel/mason-tool-installer.nvim",
         { "j-hui/fidget.nvim", opts = {} },
         { "folke/neodev.nvim", opts = {} },
@@ -24,9 +24,18 @@ return {
         end
 
         local dirname, projname = project_name_to_container_name()
+        -- If we're on a [No Name] buffer at startup, fall back to cwd so joinpath never gets nil
+        dirname = dirname or (vim.uv and vim.uv.cwd()) or vim.fn.getcwd()
+
+        local bridge = vim.fs.joinpath(dirname, "xdp-blocklist/scripts/clangd_lsp_bridge.py")
 
         local clang_cmd_bin = vim.fs.joinpath(dirname, "xdp-blocklist/scripts/clangd_lsp_bridge.py")
-        local clang_cmd = { clang_cmd_bin, projname or "", dirname or "" }
+        local clang_cmd
+        if vim.uv.fs_stat(bridge) then
+            clang_cmd = { bridge, projname or "", dirname }
+        else
+            clang_cmd = { "clangd" }
+        end
 
         -- 1) Merge server settings
         opts.servers = opts.servers or {}
