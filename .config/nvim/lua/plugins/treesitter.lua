@@ -1,9 +1,16 @@
 return {
     "nvim-treesitter/nvim-treesitter",
+    lazy = false,
+    build = ":TSUpdate",
     opts = {
         ensure_installed = {
             "bash",
+            "comment",
             "go",
+            "gomod",
+            "gosum",
+            "gotmpl",
+            "gowork",
             "html",
             "javascript",
             "json",
@@ -13,6 +20,7 @@ return {
             "python",
             "query",
             "regex",
+            "sql",
             "tsx",
             "typescript",
             "vim",

@@ -5,7 +5,7 @@ return {
         "mason-org/mason-lspconfig.nvim",
         "WhoIsSethDaniel/mason-tool-installer.nvim",
         { "j-hui/fidget.nvim", opts = {} },
-        { "folke/neodev.nvim", opts = {} },
+        -- { "folke/neodev.nvim", opts = {} },
     },
     opts = function(_, opts)
         local lspconfig = require("lspconfig")
@@ -67,7 +67,7 @@ return {
         opts.servers.gopls = vim.tbl_deep_extend("force", opts.servers.gopls or {}, {
             settings = {
                 gopls = {
-                    gofumpt = false,
+                    gofumpt = true,
                     codelenses = {
                         generate = true,
                         regenerate_cgo = true,

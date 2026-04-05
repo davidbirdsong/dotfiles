@@ -6,7 +6,10 @@ return {
         "nvim-treesitter/nvim-treesitter",
     },
     config = function()
-        require("go").setup()
+        vim.env.GOFUMPT_SPLIT_LONG_LINES = "on"
+        require("go").setup({
+            gofumpt = true,
+        })
     end,
     event = { "CmdlineEnter" },
     ft = { "go", "gomod" },
