@@ -2,7 +2,7 @@ set -o vi
 
 source_files=(
   ~/.go_env
-  ~/.mise.bashrc
+
   ~/.githhub_tokens
   ~/.gcloud
   ~/.aws_aliases
@@ -51,3 +51,4 @@ export CGO_LDFLAGS="-L/opt/homebrew/opt/openssl@3/lib -L/opt/homebrew/opt/re2/li
 
 # export OPENSSL_ROOT_DIR="$(brew --prefix openssl)/lib"
 export OPENSSL_ROOT_DIR="/opt/homebrew/opt/openssl@3/lib"
+[[ -f ~/.mise.bashrc ]]  && . ~/.mise.bashrc
