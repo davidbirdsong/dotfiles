@@ -1,0 +1,25 @@
+parse_gs_base() {
+    command -v git >/dev/null 2>&1 || return
+    git rev-parse --is-inside-work-tree >/dev/null 2>&1 || return
+
+    local branch
+    branch=$(git symbolic-ref --quiet --short HEAD 2>/dev/null)
+    [[ -z "$branch" ]] && return
+
+    local base
+    base=$(git cat-file -p "refs/spice/data:branches/${branch}" 2>/dev/null \
+      | jq -r '.base.name // empty' 2>/dev/null)
+
+    [[ -n "$base" ]] && printf "→%s" "$base"
+  }
+
+  
+export PS1='\[\e[36m\]\w\[\e[0m\]$(
+  b=$(parse_git_branch)
+  gs=$(parse_gs_base)
+  if [ -n "$b" ] && [ -n "$gs" ]; then
+    printf " \[\e[33m\](%s \[\e[90m\]%s\[\e[33m\])\[\e[0m\]" "$b" "$gs"
+  elif [ -n "$b" ]; then
+    printf " \[\e[33m\](%s)\[\e[0m\]" "$b"
+  fi
+) \$ '
