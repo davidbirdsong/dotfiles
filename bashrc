@@ -2,11 +2,13 @@ set -o vi
 
 source_files=(
   ~/.go_env
-
   ~/.githhub_tokens
   ~/.gcloud
   ~/.aws_aliases
   ~/.brew_completions
+  ~/.kube_switcher
+  # ~/.git_ps1.rc
+  ~/.git_spice_ps1.rc
 )
 for f in "${source_files[@]}"; do
   [[ -f $f ]] || continue
@@ -22,24 +24,10 @@ done
 # eval "$(/opt/homebrew/bin/brew shellenv)"
 #
 # Git branch helper
-parse_git_branch() {
-  command -v git >/dev/null 2>&1 || return
-  git rev-parse --is-inside-work-tree >/dev/null 2>&1 || return
 
-  local branch
-  branch=$(git symbolic-ref --quiet --short HEAD 2>/dev/null)
-
-  if [[ -n $branch ]]; then
-    printf "%s" "$branch"
-  else
-    printf "DETACHED"
-  fi
-}
-
-# PS1
-export PS1='\[\e[36m\]\w\[\e[0m\]$(git_branch=$(parse_git_branch); [ -n "$git_branch" ] && printf " \[\e[33m\](%s)\[\e[0m\]" "$git_branch") \$ '
 
 alias vi=nvim
+alias gs=git-spice
 alias go-me="pushd ~/src/go/src/github.com/davidbirdsong/"
 
 PATH="$HOME/bin:""$PATH"
@@ -52,3 +40,6 @@ export CGO_LDFLAGS="-L/opt/homebrew/opt/openssl@3/lib -L/opt/homebrew/opt/re2/li
 # export OPENSSL_ROOT_DIR="$(brew --prefix openssl)/lib"
 export OPENSSL_ROOT_DIR="/opt/homebrew/opt/openssl@3/lib"
 [[ -f ~/.mise.bashrc ]]  && . ~/.mise.bashrc
+
+complete -C /opt/homebrew/bin/git-spice git-spice
+complete -C /opt/homebrew/bin/git-spice gs
