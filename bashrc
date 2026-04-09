@@ -24,22 +24,55 @@ done
 # eval "$(/opt/homebrew/bin/brew shellenv)"
 #
 # Git branch helper
+#
+PATH="$HOME""/bin:/opt/homebrew/bin:""$PATH"
+PATH="/usr/local/bin:/usr/local/go/bin/""$PATH"
+export PATH="$PATH"
 
-
-alias vi=nvim
 alias gs=git-spice
 alias go-me="pushd ~/src/go/src/github.com/davidbirdsong/"
 
-PATH="$HOME/bin:""$PATH"
-PATH="/usr/local/bin:/usr/local/go/bin/:/opt/homebrew/bin:""$PATH"":$GOPATH/bin"
-export PATH="$PATH"
+# prefer mise-informed binary versions
+if command -v mise >/dev/null 2>&1; then
+  echo doing mise defs
+  alias biome-fix="mise exec -- biome check --write ."
 
+  vi() {
+    mise exec -- nvim "$@"
+  }
+
+  go() {
+    mise exec -- go "$@"
+  }
+
+  make() {
+    mise exec -- make "$@"
+  }
+
+else
+  alias vi=nvim
+
+fi
+
+# dont remember why these are here
 # export CGO_LDFLAGS="-L$(brew --prefix openssl)/lib -L$(brew --prefix re2)/lib"
-export CGO_LDFLAGS="-L/opt/homebrew/opt/openssl@3/lib -L/opt/homebrew/opt/re2/lib"
+# export CGO_LDFLAGS="-L/opt/homebrew/opt/openssl@3/lib -L/opt/homebrew/opt/re2/lib"
 
 # export OPENSSL_ROOT_DIR="$(brew --prefix openssl)/lib"
-export OPENSSL_ROOT_DIR="/opt/homebrew/opt/openssl@3/lib"
-[[ -f ~/.mise.bashrc ]]  && . ~/.mise.bashrc
+# export OPENSSL_ROOT_DIR="/opt/homebrew/opt/openssl@3/lib"
 
 complete -C /opt/homebrew/bin/git-spice git-spice
 complete -C /opt/homebrew/bin/git-spice gs
+
+# improve history
+export HISTSIZE=100000
+export HISTFILESIZE=200000
+export HISTCONTROL=ignoredups:erasedups
+shopt -s histappend
+PROMPT_COMMAND='history -a; history -n'
+# need brew install fzf
+if command -v brew >/dev/null 2>&1; then
+  eval "$(brew shellenv)"
+  [ -f "$(brew --prefix)/opt/fzf/shell/key-bindings.bash" ] && source "$(brew --prefix)/opt/fzf/shell/key-bindings.bash"
+  [ -f "$(brew --prefix)/opt/fzf/shell/completion.bash" ] && source "$(brew --prefix)/opt/fzf/shell/completion.bash"
+fi
