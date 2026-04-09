@@ -7,7 +7,7 @@ source_files=(
   ~/.aws_aliases
   ~/.brew_completions
   ~/.kube_switcher
-  # ~/.git_ps1.rc
+  ~/.git_ps1.rc
   ~/.git_spice_ps1.rc
 )
 for f in "${source_files[@]}"; do
