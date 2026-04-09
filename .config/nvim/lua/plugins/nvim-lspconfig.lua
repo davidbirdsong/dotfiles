@@ -63,6 +63,13 @@ return {
             return false
         end
 
+        if vim.fn.executable("mise") == 1 then
+            opts.servers.biome = vim.tbl_deep_extend("force", opts.servers.biome or {}, {
+                cmd = { "mise", "exec", "--", "biome", "lsp-proxy" },
+                root_dir = util.root_pattern("biome.json", "biome.jsonc"),
+            })
+        end
+
         -- Example: keep your gopls settings merged
         opts.servers.gopls = vim.tbl_deep_extend("force", opts.servers.gopls or {}, {
             settings = {
