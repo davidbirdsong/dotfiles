@@ -1,0 +1,53 @@
+__rgf_insert__() {
+  local result file
+
+  result=$(fzf --ansi \
+      --disabled \
+      --height 70% \
+      --layout=reverse \
+      --border \
+      --bind 'ctrl-j:down,ctrl-k:up' \
+      --bind 'start:reload:rg --line-number --no-heading --color=always ""' \
+      --bind 'change:reload:rg --line-number --no-heading --color=always {q} || true' \
+      --delimiter ':' \
+      --preview 'bat --style=numbers --color=always --highlight-line {2} {1}' \
+      --preview-window=up:60%)
+
+  [[ -z "$result" ]] && return
+
+  file=$(echo "$result" | cut -d: -f1)
+
+  READLINE_LINE="${READLINE_LINE}${file}"
+  READLINE_POINT=${#READLINE_LINE}
+
+  # adds line number to output, remove if annoying
+  local line
+  file=$(echo "$result" | cut -d: -f1)
+  line=$(echo "$result" | cut -d: -f2)
+
+  READLINE_LINE="${READLINE_LINE}${file} +${line}"
+  READLINE_POINT=${#READLINE_LINE}
+}
+bind -x '"\C-g": __rgf_insert__'
+
+
+__ff_insert__() {
+  local file
+
+  file=$(fd --type f --hidden --follow --exclude .git 2>/dev/null | \
+    fzf --height 70% --layout=reverse --border \
+        --bind 'ctrl-j:down,ctrl-k:up' \
+        --preview 'bat --style=numbers --color=always {}' \
+        --preview-window=up:60%)
+
+  [[ -z "$file" ]] && return
+
+  READLINE_LINE="${READLINE_LINE}${file}"
+  READLINE_POINT=${#READLINE_LINE}
+}
+bind -x '"\C-f": __ff_insert__'
+
+
+export RIPGREP_CONFIG_PATH="$HOME/.ripgrep.rc"
+export FD_IGNORE_FILE="$HOME/.picker_ignore"
+

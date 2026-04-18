@@ -10,6 +10,7 @@ source_files=(
   ~/.kube_switcher
   ~/.git_ps1.rc
   ~/.git_spice_ps1.rc
+  ~/.pickers.rc
 )
 for f in "${source_files[@]}"; do
   [[ -f $f ]] || continue

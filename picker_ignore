@@ -1,0 +1,11 @@
+node_modules
+dist
+build
+.cache
+.tmp
+coverage
+go/pkg
+src/dis.go
+.local/share
+.DS_Store
+aws/cli/cache
