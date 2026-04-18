@@ -21,15 +21,66 @@ export FZF_CTRL_R_OPTS="
 "
 PROMPT_COMMAND='history -a'
 
-## fzf pull from all history, not just current session.
-__fzf_history__() {
-  history -n # pull latest safely on demand
 
-  # dump full history, newest first, dedup intelligently
-  history | tac | awk '!seen[$0]++' |
-    fzf $FZF_CTRL_R_OPTS |
-    sed 's/^[ ]*[0-9]\+[ ]*//' |
-    READLINE_LINE=$(cat)
+# __fzf_history__
+#
+# Ctrl-R replacement that provides intelligent history search using fzf.
+#
+# Behavior:
+#   - Imports latest commands from other sessions (history -n) at search time
+#   - Deduplicates history entries
+#   - Ranks commands using a combined score:
+#       score = (frequency * weight) + recency
+#     where:
+#       frequency = number of occurrences of the command
+#       recency   = position in history (more recent = higher)
+#   - Sorts by score so commonly-used and recent commands appear first
+#   - Sends ranked list to fzf for fuzzy selection
+#   - Inserts selected command into the current prompt (READLINE_LINE)
+#
+# Properties:
+#   - Does NOT modify or reorder bash history
+#   - Safe with history expansion (!!, !$, etc.)
+#   - Cross-shell history is merged only when invoked (not on every prompt)
+#
+# Tuning:
+#   - Adjust frequency weight to bias toward frequent vs recent commands
+#   - Add filters in awk to exclude noisy commands (e.g., ls, cd)
+#   - Can be extended with time-decay for smarter aging
+#
+# Mental model:
+#   Search-time ranking over a stable, append-only history
+#
+# Usage:
+#   Bound to Ctrl-R via:
+#     bind -x '"\C-r": __fzf_history__'
+
+__fzf_history__() {
+  history -n  # pull in latest from other shells (safe here)
+
+  history | awk '
+  {
+    # extract command (strip leading number)
+    cmd = $0
+    sub(/^[ ]*[0-9]+[ ]+/, "", cmd)
+
+    # increment frequency
+    freq[cmd]++
+
+    # track recency (line number = proxy for time)
+    last[cmd] = NR
+  }
+  END {
+    for (cmd in freq) {
+      # scoring: tune these weights if you want
+      score = (freq[cmd] * 10) + last[cmd]
+      printf "%d\t%s\n", score, cmd
+    }
+  }' | sort -nr | cut -f2- | \
+  fzf $FZF_CTRL_R_OPTS | \
+  sed 's/^[ ]*[0-9]\+[ ]*//' | \
+  READLINE_LINE=$(cat)
+
   READLINE_POINT=${#READLINE_LINE}
 }
 
