@@ -1,0 +1,43 @@
+# improve history (safe version)
+export HISTSIZE=100000
+export HISTTIMEFORMAT='%F %T '
+export HISTFILESIZE=200000
+export HISTCONTROL=ignoredups
+# ignores leading-space commands (useful for secrets)
+export HISTCONTROL=ignoreboth
+export HISTIGNORE="&:[ ]*:exit"
+
+shopt -s histappend
+shopt -s cmdhist
+alias hsync='history -n' # bring other history into this session
+
+export FZF_CTRL_R_OPTS="
+  --height 70%
+  --layout=reverse
+  --border
+  --tiebreak=index
+  --preview 'echo {}'
+  --preview-window=down:3:wrap
+"
+PROMPT_COMMAND='history -a'
+
+## fzf pull from all history, not just current session.
+__fzf_history__() {
+  history -n # pull latest safely on demand
+
+  # dump full history, newest first, dedup intelligently
+  history | tac | awk '!seen[$0]++' |
+    fzf $FZF_CTRL_R_OPTS |
+    sed 's/^[ ]*[0-9]\+[ ]*//' |
+    READLINE_LINE=$(cat)
+  READLINE_POINT=${#READLINE_LINE}
+}
+
+bind -x '"\C-r": __fzf_history__'
+
+# need brew install fzf
+if command -v brew >/dev/null 2>&1; then
+  eval "$(brew shellenv)"
+  [ -f "$(brew --prefix)/opt/fzf/shell/key-bindings.bash" ] && source "$(brew --prefix)/opt/fzf/shell/key-bindings.bash"
+  [ -f "$(brew --prefix)/opt/fzf/shell/completion.bash" ] && source "$(brew --prefix)/opt/fzf/shell/completion.bash"
+fi

@@ -5,7 +5,8 @@ source_files=(
   ~/.githhub_tokens
   ~/.gcloud
   ~/.aws_aliases
-  ~/.brew_completions
+  ~/.history.rc
+  ~/.bash_completion.rc
   ~/.kube_switcher
   ~/.git_ps1.rc
   ~/.git_spice_ps1.rc
@@ -34,8 +35,9 @@ alias go-me="pushd ~/src/go/src/github.com/davidbirdsong/"
 
 # prefer mise-informed binary versions
 if command -v mise >/dev/null 2>&1; then
-  echo doing mise defs
   alias biome-fix="mise exec -- biome check --write ."
+  alias golangci-lint-fix="GOFUMPT_SPLIT_LONG_LINES=on mise exec -- golangci-lint fmt"
+  alias golangci-lint-check="GOFUMPT_SPLIT_LONG_LINES=on mise exec -- golangci-lint run --path-mode=abs"
 
   vi() {
     mise exec -- nvim "$@"
@@ -49,6 +51,10 @@ if command -v mise >/dev/null 2>&1; then
     mise exec -- make "$@"
   }
 
+  pulumi() {
+    mise exec -- pulumi "$@"
+  }
+
 else
   alias vi=nvim
 
@@ -60,19 +66,3 @@ fi
 
 # export OPENSSL_ROOT_DIR="$(brew --prefix openssl)/lib"
 # export OPENSSL_ROOT_DIR="/opt/homebrew/opt/openssl@3/lib"
-
-complete -C /opt/homebrew/bin/git-spice git-spice
-complete -C /opt/homebrew/bin/git-spice gs
-
-# improve history
-export HISTSIZE=100000
-export HISTFILESIZE=200000
-export HISTCONTROL=ignoredups:erasedups
-shopt -s histappend
-PROMPT_COMMAND='history -a; history -n'
-# need brew install fzf
-if command -v brew >/dev/null 2>&1; then
-  eval "$(brew shellenv)"
-  [ -f "$(brew --prefix)/opt/fzf/shell/key-bindings.bash" ] && source "$(brew --prefix)/opt/fzf/shell/key-bindings.bash"
-  [ -f "$(brew --prefix)/opt/fzf/shell/completion.bash" ] && source "$(brew --prefix)/opt/fzf/shell/completion.bash"
-fi
