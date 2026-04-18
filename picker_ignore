@@ -5,7 +5,10 @@ build
 .tmp
 coverage
 go/pkg
-src/dis.go
+src/dist.go
 .local/share
 .DS_Store
 aws/cli/cache
+go/bin
+.npm
+.kube/cache
