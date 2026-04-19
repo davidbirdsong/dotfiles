@@ -84,7 +84,38 @@ __fzf_history__() {
   READLINE_POINT=${#READLINE_LINE}
 }
 
+
+__fzf_history__() {
+  history -n
+
+  local opts=(
+    --height 70%
+    --layout=reverse
+    --border
+    --tiebreak=index
+    --preview 'echo {}'
+    --preview-window=down:3:wrap
+  )
+
+  history | awk '...' | sort -nr | cut -f2- | \
+  fzf "${opts[@]}" | \
+  sed 's/^[ ]*[0-9]\+[ ]*//' | \
+  READLINE_LINE=$(cat)
+
+  READLINE_POINT=${#READLINE_LINE}
+}
+
 bind -x '"\C-r": __fzf_history__'
+
+
+
+export FZF_DEFAULT_OPTS="
+  --height 70%
+  --layout=reverse
+  --border
+  --bind=ctrl-j:down,ctrl-k:up
+  --bind=ctrl-d:half-page-down,ctrl-u:half-page-up
+"
 
 # need brew install fzf
 if command -v brew >/dev/null 2>&1; then
