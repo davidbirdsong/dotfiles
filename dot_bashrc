@@ -1,0 +1,73 @@
+set -o vi
+
+source_files=(
+  ~/.go_env
+  ~/.githhub_tokens
+  ~/.gcloud
+  ~/.aws_aliases
+  ~/.history.rc
+  ~/.bash_completion.rc
+  ~/.completions/chezmoi
+  ~/.kube_switcher
+  ~/.git_ps1.rc
+  ~/.git_spice_ps1.rc
+  ~/.pickers.rc
+)
+for f in "${source_files[@]}"; do
+  [[ -f $f ]] || continue
+  . $f
+done
+
+# this doesn't seem to work
+# . "/opt/homebrew/opt/kube-ps1/share/kube-ps1.sh"
+# PS1='$(kube_ps1)'$PS1
+
+# echo >> /Users/david.birdsong/.zprofile
+# echo 'eval "$(/opt/homebrew/bin/brew shellenv)"' >> /Users/david.birdsong/.zprofile
+# eval "$(/opt/homebrew/bin/brew shellenv)"
+#
+# Git branch helper
+#
+PATH="$HOME""/bin:/opt/homebrew/bin:""$PATH"
+PATH="/usr/local/bin:/usr/local/go/bin/""$PATH"
+export PATH="$PATH"
+
+export VISUAL=/usr/bin/vim
+export EDITOR=/usr/bin/vim
+
+alias gs=git-spice
+alias go-me="pushd ~/src/go/src/github.com/davidbirdsong/"
+
+# prefer mise-informed binary versions
+if command -v mise >/dev/null 2>&1; then
+  alias biome-fix="mise exec -- biome check --write ."
+  alias golangci-lint-fix="GOFUMPT_SPLIT_LONG_LINES=on mise exec -- golangci-lint fmt"
+  alias golangci-lint-check="GOFUMPT_SPLIT_LONG_LINES=on mise exec -- golangci-lint run --path-mode=abs"
+
+  vi() {
+    mise exec -- nvim "$@"
+  }
+
+  go() {
+    mise exec -- go "$@"
+  }
+
+  make() {
+    mise exec -- make "$@"
+  }
+
+  pulumi() {
+    mise exec -- pulumi "$@"
+  }
+
+else
+  alias vi=nvim
+
+fi
+
+# dont remember why these are here
+# export CGO_LDFLAGS="-L$(brew --prefix openssl)/lib -L$(brew --prefix re2)/lib"
+# export CGO_LDFLAGS="-L/opt/homebrew/opt/openssl@3/lib -L/opt/homebrew/opt/re2/lib"
+
+# export OPENSSL_ROOT_DIR="$(brew --prefix openssl)/lib"
+# export OPENSSL_ROOT_DIR="/opt/homebrew/opt/openssl@3/lib"

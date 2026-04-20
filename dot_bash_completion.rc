@@ -1,0 +1,17 @@
+
+# Load bash-completion
+if [ -f /opt/homebrew/etc/profile.d/bash_completion.sh ]; then
+  source /opt/homebrew/etc/profile.d/bash_completion.sh
+fi
+
+if command -v pulumi >/dev/null 2>&1; then
+  source ~/.pulumi-completion.bash
+fi
+if command -v mise >/dev/null 2>&1; then
+  source ~/.mise.rc
+fi
+
+if command -v /opt/homebrew/bin/git-spice >/dev/null 2>&1; then
+  complete -C /opt/homebrew/bin/git-spice git-spice
+  complete -C /opt/homebrew/bin/git-spice gs
+fi

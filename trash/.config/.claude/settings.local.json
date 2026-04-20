@@ -1,0 +1,19 @@
+{
+  "permissions": {
+    "allow": [
+      "Read(//Users/davidbirdsong/.local/share/nvim/lazy/**)",
+      "Read(//Users/davidbirdsong/.local/share/nvim/lazy/nvim-treesitter/runtime/**)",
+      "Bash(tree-sitter --version)",
+      "Read(//private/tmp/**)",
+      "Read(//Users/davidbirdsong/.cache/**)",
+      "Bash(curl --silent --fail --show-error --retry 2 -L \"https://github.com/tree-sitter/tree-sitter-go/archive/2346a3ab1bb3857b48b29d779a1ef9799a248cd7.tar.gz\" --output tree-sitter-go.tar.gz)",
+      "Bash(echo \"exit: $?\")",
+      "Bash(mkdir -p tree-sitter-go-src)",
+      "Bash(tar -xzf tree-sitter-go.tar.gz -C tree-sitter-go-src)",
+      "Bash(tree-sitter build:*)",
+      "Bash(cp /tmp/go.so ~/.local/share/nvim/site/parser/go.so)",
+      "Bash(~/.local/share/nvim/site/parser-info/go.revision)",
+      "Bash(/tmp/install_parsers.sh 2>&1)"
+    ]
+  }
+}

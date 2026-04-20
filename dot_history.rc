@@ -1,0 +1,105 @@
+# improve history (safe version)
+export HISTSIZE=100000
+export HISTTIMEFORMAT='%F %T '
+export HISTFILESIZE=200000
+export HISTCONTROL=ignoredups
+# ignores leading-space commands (useful for secrets)
+export HISTCONTROL=ignoreboth
+export HISTIGNORE="&:[ ]*:exit"
+
+shopt -s histappend
+shopt -s cmdhist
+alias hsync='history -n' # bring other history into this session
+
+export FZF_CTRL_R_OPTS="
+  --height 70%
+  --layout=reverse
+  --border
+  --tiebreak=index
+  --preview 'echo {}'
+  --preview-window=down:3:wrap
+"
+PROMPT_COMMAND='history -a'
+
+
+# __fzf_history__
+#
+# Ctrl-R replacement that provides intelligent history search using fzf.
+#
+# Behavior:
+#   - Imports latest commands from other sessions (history -n) at search time
+#   - Deduplicates history entries
+#   - Ranks commands using a combined score:
+#       score = (frequency * weight) + recency
+#     where:
+#       frequency = number of occurrences of the command
+#       recency   = position in history (more recent = higher)
+#   - Sorts by score so commonly-used and recent commands appear first
+#   - Sends ranked list to fzf for fuzzy selection
+#   - Inserts selected command into the current prompt (READLINE_LINE)
+#
+# Properties:
+#   - Does NOT modify or reorder bash history
+#   - Safe with history expansion (!!, !$, etc.)
+#   - Cross-shell history is merged only when invoked (not on every prompt)
+#
+# Tuning:
+#   - Adjust frequency weight to bias toward frequent vs recent commands
+#   - Add filters in awk to exclude noisy commands (e.g., ls, cd)
+#   - Can be extended with time-decay for smarter aging
+#
+# Mental model:
+#   Search-time ranking over a stable, append-only history
+#
+# Usage:
+#   Bound to Ctrl-R via:
+#     bind -x '"\C-r": __fzf_history__'
+
+__fzf_history__() {
+  history -n
+
+  local opts=(
+    --height 70%
+    --layout=reverse
+    --border
+    --tiebreak=index
+    --preview 'echo {}'
+    --preview-window=down:3:wrap
+  )
+
+  history | awk '...' | sort -nr | cut -f2- | \
+  fzf "${opts[@]}" | \
+  sed 's/^[ ]*[0-9]\+[ ]*//' | \
+  READLINE_LINE=$(cat)
+
+  READLINE_POINT=${#READLINE_LINE}
+}
+
+__fzf_history__() {
+  history -n
+  history | awk '{ cmd=$0; sub(/^[ ]*[0-9]+[ ]+/, "", cmd); freq[cmd]++; last[cmd]=NR } END { for (cmd in freq) { score=(freq[cmd]*10)+last[cmd]; printf "%d\t%s\n", score, cmd } }' \
+  | sort -nr | cut -f2- \
+  | fzf $FZF_CTRL_R_OPTS \
+  | {
+      read -r line
+      READLINE_LINE="$line"
+      READLINE_POINT=${#READLINE_LINE}
+    }
+}
+
+bind -x '"\C-r": __fzf_history__'
+
+export FZF_DEFAULT_OPTS="
+  --height 70%
+  --layout=reverse
+  --border
+  --bind=ctrl-j:down,ctrl-k:up
+  --bind=ctrl-d:half-page-down,ctrl-u:half-page-up
+"
+
+# need brew install fzf
+if command -v brew >/dev/null 2>&1; then
+  eval "$(brew shellenv)"
+  [ -f "$(brew --prefix)/opt/fzf/shell/key-bindings.bash" ] && source "$(brew --prefix)/opt/fzf/shell/key-bindings.bash"
+  [ -f "$(brew --prefix)/opt/fzf/shell/completion.bash" ] && source "$(brew --prefix)/opt/fzf/shell/completion.bash"
+fi
