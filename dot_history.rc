@@ -57,26 +57,6 @@ PROMPT_COMMAND='history -a'
 
 __fzf_history__() {
   history -n
-
-  local opts=(
-    --height 70%
-    --layout=reverse
-    --border
-    --tiebreak=index
-    --preview 'echo {}'
-    --preview-window=down:3:wrap
-  )
-
-  history | awk '...' | sort -nr | cut -f2- | \
-  fzf "${opts[@]}" | \
-  sed 's/^[ ]*[0-9]\+[ ]*//' | \
-  READLINE_LINE=$(cat)
-
-  READLINE_POINT=${#READLINE_LINE}
-}
-
-__fzf_history__() {
-  history -n
   history | awk '{ cmd=$0; sub(/^[ ]*[0-9]+[ ]+/, "", cmd); freq[cmd]++; last[cmd]=NR } END { for (cmd in freq) { score=(freq[cmd]*10)+last[cmd]; printf "%d\t%s\n", score, cmd } }' \
   | sort -nr | cut -f2- \
   | fzf $FZF_CTRL_R_OPTS \
