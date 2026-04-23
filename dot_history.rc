@@ -57,7 +57,7 @@ PROMPT_COMMAND='history -a'
 __fzf_history__() {
   history -n
   local line
-  line=$(history | awk '{ cmd=$0; sub(/^[ ]*[0-9]+[ ]+/, "", cmd); freq[cmd]++; last[cmd]=NR } END { for (cmd in freq) { score=(freq[cmd]*10)+last[cmd]; printf "%d\t%s\n", score, cmd } }' \
+  line=$(history | awk '{ cmd=$0; sub(/^[ ]*[0-9]+[ ]+/, "", cmd); sub(/^[0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2} /, "", cmd); freq[cmd]++; last[cmd]=NR } END { for (cmd in freq) { score=(freq[cmd]*10)+last[cmd]; printf "%d\t%s\n", score, cmd } }' \
   | sort -nr | cut -f2- \
   | fzf $FZF_CTRL_R_OPTS --preview 'echo {}')
   READLINE_LINE="$line"
