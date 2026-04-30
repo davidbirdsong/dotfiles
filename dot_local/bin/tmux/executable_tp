@@ -1,0 +1,62 @@
+#!/usr/bin/env bash
+# ~/dotfiles/bin/tp
+
+set -euo pipefail
+
+CODE_DIR="${CODE_DIR:-$HOME/code}"
+
+# --- existing tmux sessions ---
+sessions="$(
+  tmux list-sessions -F "session\t#S" 2>/dev/null || true
+)"
+
+# --- project directories via fd ---
+projects="$(
+  fd . \
+    --base-directory "$CODE_DIR" \
+    --type d \
+    --max-depth 2 \
+    --exclude .git \
+    --exclude go/pkg \
+    --exclude node_modules \
+    --exclude dist \
+    --exclude build |
+    sed "s|^$CODE_DIR/||" |
+    awk '{ print "project\t" $0 }'
+)"
+
+# --- chooser ---
+choice="$(
+  printf "%s\n%s\n" "$sessions" "$projects" |
+    sed '/^$/d' |
+    fzf --delimiter=$'\t' --with-nth=1,2
+)"
+
+[ -z "${choice:-}" ] && exit 0
+
+kind="$(printf '%s' "$choice" | cut -f1)"
+target="$(printf '%s' "$choice" | cut -f2-)"
+
+case "$kind" in
+session)
+  tmux switch-client -t "$target" 2>/dev/null || tmux attach -t "$target"
+  ;;
+
+project)
+  project_path="$CODE_DIR/$target"
+  session_name="$(basename "$project_path" | tr '.:' '__')"
+
+  if tmux has-session -t "$session_name" 2>/dev/null; then
+    tmux switch-client -t "$session_name" 2>/dev/null || tmux attach -t "$session_name"
+  else
+    tmux new-session -d -s "$session_name" -c "$project_path" -n editor
+    tmux send-keys -t "$session_name:1" "nvim ." C-m
+
+    tmux new-window -t "$session_name" -c "$project_path" -n shell
+    tmux new-window -t "$session_name" -c "$project_path" -n logs
+
+    tmux select-window -t "$session_name:1"
+    tmux switch-client -t "$session_name" 2>/dev/null || tmux attach -t "$session_name"
+  fi
+  ;;
+esac

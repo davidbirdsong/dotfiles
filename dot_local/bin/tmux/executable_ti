@@ -1,0 +1,33 @@
+#!/usr/bin/env bash
+# ~/dotfiles/bin/ti  (tmuxinator interactive)
+
+set -euo pipefail
+
+action="$(
+  printf "start\nstop\nedit\n" | fzf --prompt="action > "
+)"
+
+[ -z "${action:-}" ] && exit 0
+
+project="$(
+  tmuxinator list |
+    tail -n +2 |
+    tr ' ' '\n' |
+    sed '/^$/d' |
+    sort -u |
+    fzf --prompt="project > "
+)"
+
+[ -z "${project:-}" ] && exit 0
+
+case "$action" in
+  start)
+    tmuxinator start "$project"
+    ;;
+  stop)
+    tmuxinator stop "$project"
+    ;;
+  edit)
+    ${EDITOR:-nvim} "$(tmuxinator open "$project" | tail -n1)"
+    ;;
+esac

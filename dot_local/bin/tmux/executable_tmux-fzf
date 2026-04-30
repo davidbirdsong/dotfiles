@@ -1,0 +1,31 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+choice="$(
+  {
+    tmux list-sessions -F 'session	#S'
+    tmux list-windows -a -F 'window	#S	#I	#W'
+  } |
+    fzf \
+      --delimiter=$'\t' \
+      --with-nth=1,2,4 \
+      --bind 'ctrl-j:down,ctrl-k:up'
+)"
+
+[ -z "${choice:-}" ] && exit 0
+
+kind="$(printf '%s' "$choice" | cut -f1)"
+
+case "$kind" in
+  session)
+    session="$(printf '%s' "$choice" | cut -f2)"
+    tmux switch-client -t "$session"
+    ;;
+
+  window)
+    session="$(printf '%s' "$choice" | cut -f2)"
+    window="$(printf '%s' "$choice" | cut -f3)"
+    tmux switch-client -t "$session:$window"
+    ;;
+esac

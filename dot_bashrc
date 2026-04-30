@@ -29,14 +29,18 @@ done
 # Git branch helper
 #
 PATH="$HOME""/bin:/opt/homebrew/bin:""$PATH"
-PATH="/usr/local/bin:/usr/local/go/bin/""$PATH"
+PATH="$PATH"":/usr/local/bin:/usr/local/go/bin/"
 export PATH="$PATH"
 
 export VISUAL=/usr/bin/vim
 export EDITOR=/usr/bin/vim
-
 alias gs=git-spice
 alias go-me="pushd ~/src/go/src/github.com/davidbirdsong/"
+
+if command -v tmux >/dev/null 2>&1; then
+  alias ta='tmux attach'
+  alias tls='tmux list-sessions'
+fi
 
 # prefer mise-informed binary versions
 if command -v mise >/dev/null 2>&1; then
