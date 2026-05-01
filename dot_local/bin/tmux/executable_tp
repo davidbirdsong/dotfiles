@@ -21,7 +21,6 @@ projects="$(
     --exclude node_modules \
     --exclude dist \
     --exclude build |
-    sed "s|^$CODE_DIR/||" |
     awk '{ print "project\t" $0 }'
 )"
 
@@ -43,7 +42,7 @@ session)
   ;;
 
 project)
-  project_path="$CODE_DIR/$target"
+  project_path="$(cd "$CODE_DIR/$target" && pwd)"
   session_name="$(basename "$project_path" | tr '.:' '__')"
 
   if tmux has-session -t "$session_name" 2>/dev/null; then

@@ -55,11 +55,13 @@ windows:
       panes:
         - nvim . 
         - bash
+        - claude
   - shoal:
       root: ~/src/github.com/davidbirdsong/shoal
+      layout: main-vertical
       panes:
         - nvim . 
-        - bash
+        - claude
 
   - vercel-ui: 
       root: ~/src/github.com/davidbirdsong/alchemicalbrothers.io
