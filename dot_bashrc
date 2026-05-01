@@ -40,6 +40,8 @@ alias go-me="pushd ~/src/go/src/github.com/davidbirdsong/"
 if command -v tmux >/dev/null 2>&1; then
   alias ta='tmux attach'
   alias tls='tmux list-sessions'
+  export PATH="~/.local/bin/tmux/:""$PATH"
+  export CODE_DIR="$HOME""/src/"
 fi
 
 # prefer mise-informed binary versions
