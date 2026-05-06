@@ -5,6 +5,9 @@ return {
             hcl = { "terraform_fmt" },
             terraform = { "terraform_fmt" },
             tf = { "terraform_fmt" },
+            javascript = { "prettier" },
+            typescript = { "prettier" },
+            json = { "prettier" },
         },
     },
 }
