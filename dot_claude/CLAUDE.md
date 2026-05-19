@@ -6,6 +6,19 @@ Use emojis sparingly. Some use is fine. Avoid excessive.
 
 
 
+## Go code navigation
+
+When working in a Go project, check whether `gograph` is available before reaching for grep for structural questions (call graphs, interface implementers, symbol lookups).
+
+1. Look for `gograph_*` MCP tools in the current session. If present, prefer them for architecture and code structure queries.
+2. If no MCP tools but a `.gograph/` directory exists in the project root, run `gograph build .` to refresh the index, then use CLI commands (e.g., `gograph implementers <InterfaceName>`, `gograph callers <FuncName>`).
+3. `gograph build . --precise` enables type-checked interface analysis when the codebase compiles cleanly.
+4. Use `gograph source` to extract a function body or mock stub without reading the whole file.
+5. Use grep/Grep tool for string literals, configuration files (.env, YAML), and markdown. Do not use gograph for those.
+
+If neither MCP tools nor `.gograph/` are present, skip all of the above and use standard tools.
+
+
 ## Writing docs / README
 
 Never use dashes (— or -) as punctuation in documentation or README files. Rephrase sentences using periods, commas, or parentheses instead.

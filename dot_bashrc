@@ -12,6 +12,8 @@ source_files=(
   ~/.git_ps1.rc
   ~/.git_spice_ps1.rc
   ~/.pickers.rc
+  ~/.cargo/env
+
 )
 for f in "${source_files[@]}"; do
   [[ -f $f ]] || continue
@@ -77,3 +79,4 @@ fi
 
 # export OPENSSL_ROOT_DIR="$(brew --prefix openssl)/lib"
 # export OPENSSL_ROOT_DIR="/opt/homebrew/opt/openssl@3/lib"
+. "$HOME/.cargo/env"
